@@ -1,203 +1,123 @@
-import Head from 'next/head'
+import { useState } from 'react';
+import Head from 'next/head';
 
-const Home = () => (
-  <div className="container">
-    <Head>
-      <title>Create Next App</title>
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
+const Home = () => {
+	const [urlList, setUrlsList] = useState();
 
-    <main>
-      <h1 className="title">
-        Welcome to <a href="https://nextjs.org">Next.js!</a>
-      </h1>
+	const openAllUrls = e => {
+		e.preventDefault();
+		urlList.split('\n').map(url => {
+			window.open(url);
+		});
+	};
 
-      <p className="description">
-        Get started by editing <code>pages/index.js</code>
-      </p>
+	return (
+		<div className="container">
+			<Head>
+				<title>URL Opener</title>
+				<link rel="icon" href="/favicon.ico" />
+				<link href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" rel="stylesheet" />
+			</Head>
 
-      <div className="grid">
-        <a href="https://nextjs.org/docs" className="card">
-          <h3>Documentation &rarr;</h3>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+			<main>
+				<header>
+					<div>
+						<h1 className="title">URL Opener</h1>
+						<p className="description">Open all URL's on one click (one url per line)</p>
+					</div>
+					<div className="social">
+						Follow on{' '}
+						<a target="_BLANK" href="https://twitter.com/PJijin">
+							Twitter
+						</a>
+						<a target="_BLANK" href="https://github.com/PJijin">
+							Github
+						</a>
+					</div>
+				</header>
 
-        <a href="https://nextjs.org/learn" className="card">
-          <h3>Learn &rarr;</h3>
-          <p>Learn about Next.js in an interactive course with quizzes!</p>
-        </a>
+				<div className="content-area">
+					<textarea onChange={e => setUrlsList(e.target.value)}>{urlList}</textarea>
+					<button onClick={openAllUrls}>Open All</button>
+				</div>
+			</main>
+			<style jsx global>{`
+				body {
+					background: #000;
+					color: #fff;
+					padding: 1rem;
+					font-family: 'Quicksand';
+				}
 
-        <a
-          href="https://github.com/zeit/next.js/tree/master/examples"
-          className="card"
-        >
-          <h3>Examples &rarr;</h3>
-          <p>Discover and deploy boilerplate example Next.js projects.</p>
-        </a>
+				header {
+					display: flex;
+					justift-content: space-between;
+				}
+				header div {
+					flex: 1 1 45rem;
+				}
 
-        <a
-          href="https://zeit.co/new?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          className="card"
-        >
-          <h3>Deploy &rarr;</h3>
-          <p>
-            Instantly deploy your Next.js site to a public URL with ZEIT Now.
-          </p>
-        </a>
-      </div>
-    </main>
+				.social {
+					display: flex;
+					align-items: center;
+					justify-content: flex-end;
+				}
+				.social a {
+					color: #737373;
+					padding: 0 0.4rem;
+					text-decoration: none;
+				}
 
-    <footer>
-      <a
-        href="https://zeit.co?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Powered by <img src="/zeit.svg" alt="ZEIT Logo" />
-      </a>
-    </footer>
+				.container {
+					background: #000;
+				}
 
-    <style jsx>{`
-      .container {
-        min-height: 100vh;
-        padding: 0 0.5rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
+				h1 {
+					font-size: 1.5rem;
+					color: #fff;
+				}
 
-      main {
-        padding: 5rem 0;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
+				textarea {
+					width: 100%;
+					height: 50vh;
+					background: #333;
+					border: 0px;
+					font-size: 14px;
+					color: #fff;
+					padding: 0.5rem;
+					border-radius: 0.4rem;
+					line-height: 1.2rem;
+				}
 
-      footer {
-        width: 100%;
-        height: 100px;
-        border-top: 1px solid #eaeaea;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
+				textarea:focus {
+					outline: none !important;
+					border: 1px solid #008000;
+					box-shadow: 0 0 10px #008000;
+				}
 
-      footer img {
-        margin-left: 0.5rem;
-      }
+				.content-area {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					flex-direction: column;
+				}
 
-      footer a {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
+				button {
+					border: 1px double #008000;
+					margin-top: 1rem;
+					color: #fff;
+					background: transparent;
+					padding: 1rem;
+					border-radius: 0.4rem;
+					cursor: pointer;
+				}
 
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
+				button:hover {
+					border: thick double #008000;
+				}
+			`}</style>
+		</div>
+	);
+};
 
-      .title a {
-        color: #0070f3;
-        text-decoration: none;
-      }
-
-      .title a:hover,
-      .title a:focus,
-      .title a:active {
-        text-decoration: underline;
-      }
-
-      .title {
-        margin: 0;
-        line-height: 1.15;
-        font-size: 4rem;
-      }
-
-      .title,
-      .description {
-        text-align: center;
-      }
-
-      .description {
-        line-height: 1.5;
-        font-size: 1.5rem;
-      }
-
-      code {
-        background: #fafafa;
-        border-radius: 5px;
-        padding: 0.75rem;
-        font-size: 1.1rem;
-        font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-          DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-      }
-
-      .grid {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-
-        max-width: 800px;
-        margin-top: 3rem;
-      }
-
-      .card {
-        margin: 1rem;
-        flex-basis: 45%;
-        padding: 1.5rem;
-        text-align: left;
-        color: inherit;
-        text-decoration: none;
-        border: 1px solid #eaeaea;
-        border-radius: 10px;
-        transition: color 0.15s ease, border-color 0.15s ease;
-      }
-
-      .card:hover,
-      .card:focus,
-      .card:active {
-        color: #0070f3;
-        border-color: #0070f3;
-      }
-
-      .card h3 {
-        margin: 0 0 1rem 0;
-        font-size: 1.5rem;
-      }
-
-      .card p {
-        margin: 0;
-        font-size: 1.25rem;
-        line-height: 1.5;
-      }
-
-      @media (max-width: 600px) {
-        .grid {
-          width: 100%;
-          flex-direction: column;
-        }
-      }
-    `}</style>
-
-    <style jsx global>{`
-      html,
-      body {
-        padding: 0;
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-          Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-    `}</style>
-  </div>
-)
-
-export default Home
+export default Home;
