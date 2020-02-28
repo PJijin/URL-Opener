@@ -2,11 +2,25 @@ import { useState } from 'react';
 import Head from 'next/head';
 
 const Home = () => {
-	const [urlList, setUrlsList] = useState();
+	const [urlList, setUrlsList] = useState('');
+
+	const linkExtractor = text => {
+		if (text) {
+			var urlRegex = /(https?:\/\/[^\s]+)/g;
+			let linkInText = '';
+			text.replace(urlRegex, function(url) {
+				linkInText = linkInText + '\n' + url;
+				return url;
+			});
+			return linkInText.trim();
+		}
+	};
 
 	const openAllUrls = e => {
 		e.preventDefault();
-		urlList.split('\n').map(url => {
+		const output = linkExtractor(urlList);
+		setUrlsList(output);
+		output.split('\n').map(url => {
 			window.open(url);
 		});
 	};
@@ -23,7 +37,7 @@ const Home = () => {
 				<header>
 					<div>
 						<h1 className="title">URL Opener</h1>
-						<p className="description">Open all URL's on one click (one url per line)</p>
+						<p className="description">Extract link from text and open URL's</p>
 					</div>
 					<div className="social">
 						Follow on{' '}
@@ -37,7 +51,7 @@ const Home = () => {
 				</header>
 
 				<div className="content-area">
-					<textarea onChange={e => setUrlsList(e.target.value)}>{urlList}</textarea>
+					<textarea onChange={e => setUrlsList(e.target.value)} value={urlList}></textarea>
 					<button onClick={openAllUrls}>Open All</button>
 				</div>
 			</main>
