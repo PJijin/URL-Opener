@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import Head from 'next/head';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import Notifications, { notify } from 'react-notify-toast';
 
 const Home = () => {
 	const [urlList, setUrlsList] = useState('');
+	const [urlLog, setUrlLog] = useState('');
+	const [linkFilter, setLinkFilter] = useState('');
+	const [openCount, setOpenCount] = useState(10);
 
 	const linkExtractor = text => {
 		if (text) {
@@ -16,13 +21,56 @@ const Home = () => {
 		}
 	};
 
-	const openAllUrls = e => {
-		e.preventDefault();
+	const extrackLinks = () => {
 		const output = linkExtractor(urlList);
 		setUrlsList(output);
-		output.split('\n').map(url => {
-			window.open(url);
+	};
+
+	const onlyUnique = (value, index, self) => {
+		return self.indexOf(value) === index;
+	};
+
+	const applyFilters = () => {
+		extrackLinks();
+		const output = urlList.split('\n').filter(dt => dt.includes(linkFilter));
+		const result = output.splice(',').join('\n');
+		setUrlsList(result);
+	};
+
+	const makeLinksUnique = () => {
+		const uniqueLinks = urlList
+			.split('\n')
+			.filter(onlyUnique)
+			.splice(',')
+			.join('\n');
+		setUrlsList(uniqueLinks);
+	};
+
+	const openAllUrls = e => {
+		e.preventDefault();
+		extrackLinks();
+		let urlOpened = 0;
+		const urlVisited = [];
+		const urlListArray = urlList.split('\n');
+
+		urlListArray.map(url => {
+			if (openCount > urlOpened) {
+				urlOpened++;
+				urlVisited.push(url);
+				window.open(linkExtractor(url));
+			}
 		});
+
+		const newUrlList = urlListArray
+			.splice(openCount, urlListArray.length)
+			.splice(',')
+			.join('\n');
+		setUrlsList(newUrlList);
+
+		const urlLogExisting = urlLog.split('\n');
+		const logData = [...urlVisited, ...urlLogExisting].splice(',').join('\n');
+
+		setUrlLog(logData);
 	};
 
 	return (
@@ -34,10 +82,12 @@ const Home = () => {
 			</Head>
 
 			<main>
+				<Notifications />
+
 				<header>
 					<div>
 						<h1 className="title">URL Opener</h1>
-						<p className="description">Extract link from text and open URL's</p>
+						<p className="description">Extract link / filter links from text and open URL's</p>
 					</div>
 					<div className="social">
 						Follow on{' '}
@@ -51,11 +101,61 @@ const Home = () => {
 				</header>
 
 				<div className="content-area">
-					<textarea onChange={e => setUrlsList(e.target.value)} value={urlList}></textarea>
-					<button onClick={openAllUrls}>Open All</button>
+					<textarea
+						className="linksEditor"
+						onChange={e => setUrlsList(e.target.value)}
+						placeholder="Paste Text / Links"
+						value={urlList}
+					></textarea>
+					<div className="f-sb">
+						<div className="options">
+							<input
+								type="text"
+								onChange={e => setLinkFilter(e.target.value)}
+								value={linkFilter}
+								placeholder="Filter Links"
+								onBlur={applyFilters}
+							/>
+
+							<input
+								type="number"
+								onChange={e => setOpenCount(e.target.value)}
+								value={openCount}
+								placeholder="Limit URL"
+							/>
+							<span onClick={extrackLinks}>Extrack Links</span>
+							<span onClick={makeLinksUnique}>Unique Links</span>
+							<CopyToClipboard text={urlList} onCopy={() => notify.show('Copied!', 'success')}>
+								<span>Copy Links</span>
+							</CopyToClipboard>
+							<CopyToClipboard text={urlLog} onCopy={() => notify.show('Copied!', 'success')}>
+								<span>Copy Logs</span>
+							</CopyToClipboard>
+							<span
+								onClick={() => {
+									setUrlsList('');
+									setUrlLog('');
+								}}
+							>
+								Clear Links
+							</span>
+						</div>
+						<button onClick={openAllUrls}>Open URL</button>
+					</div>
+					<textarea
+						className="logEditor"
+						placeholder="URL Log"
+						onChange={e => setUrlLog(e.target.value)}
+						value={urlLog}
+					></textarea>
 				</div>
 			</main>
 			<style jsx global>{`
+				::selection {
+					background: #ff4081;
+					color: #fff;
+				}
+
 				body {
 					background: #000;
 					color: #fff;
@@ -69,6 +169,32 @@ const Home = () => {
 				}
 				header div {
 					flex: 1 1 45rem;
+				}
+
+				.description {
+					color: #737373;
+				}
+				.f-sb {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					width: 100%;
+				}
+
+				.options {
+					font-size: 12px;
+				}
+				.options input {
+					margin-right: 10px;
+				}
+
+				.options span {
+					margin: 0 10px;
+					cursor: pointer;
+					color: #737373;
+				}
+				.options span:hover {
+					color: #fff;
 				}
 
 				.social {
@@ -91,7 +217,15 @@ const Home = () => {
 					color: #fff;
 				}
 
-				textarea {
+				input {
+					background: #333;
+					border: 0px;
+					font-size: 14px;
+					color: #fff;
+					padding: 0.5rem;
+					border-radius: 0.4rem;
+				}
+				.linksEditor {
 					width: 100%;
 					height: 50vh;
 					background: #333;
@@ -102,8 +236,21 @@ const Home = () => {
 					border-radius: 0.4rem;
 					line-height: 1.2rem;
 				}
+				.logEditor {
+					width: 100%;
+					height: 13vh;
+					background: #333;
+					border: 0px;
+					font-size: 14px;
+					margin-top: 1rem;
+					color: #ccc;
+					padding: 0.5rem;
+					border-radius: 0.4rem;
+					line-height: 1.2rem;
+				}
 
-				textarea:focus {
+				textarea:focus,
+				input:focus {
 					outline: none !important;
 					border: 1px solid #008000;
 					box-shadow: 0 0 10px #008000;
@@ -120,14 +267,17 @@ const Home = () => {
 					border: 1px double #008000;
 					margin-top: 1rem;
 					color: #fff;
-					background: transparent;
-					padding: 1rem;
+					background: #465692;
+					padding: 1rem 2rem;
+					border: thick double #000;
 					border-radius: 0.4rem;
+					font-weight: 500;
 					cursor: pointer;
 				}
 
 				button:hover {
-					border: thick double #008000;
+					background: #fff;
+					color: #000;
 				}
 			`}</style>
 		</div>
