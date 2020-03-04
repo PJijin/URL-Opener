@@ -107,7 +107,7 @@ const Home = () => {
 						<a target="_BLANK" href="https://twitter.com/PJijin">
 							Twitter
 						</a>
-						<a target="_BLANK" href="https://github.com/PJijin">
+						<a target="_BLANK" href="https://github.com/PJijin/URL-Opener">
 							Github
 						</a>
 					</div>
