@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import Head from 'next/head';
+
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Notifications, { notify } from 'react-notify-toast';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 const Home = () => {
 	const [urlList, setUrlsList] = useState('');
 	const [urlLog, setUrlLog] = useState('');
+
 	const [linkFilter, setLinkFilter] = useState('');
 	const [openCount, setOpenCount] = useState(10);
+
+	useHotkeys('ctrl+r', () => openAllUrls(null));
 
 	const linkExtractor = text => {
 		if (text) {
@@ -21,20 +26,24 @@ const Home = () => {
 		}
 	};
 
-	const extrackLinks = () => {
-		const output = linkExtractor(urlList);
-		setUrlsList(output);
-	};
-
 	const onlyUnique = (value, index, self) => {
 		return self.indexOf(value) === index;
 	};
 
+	const extrackLinks = () => {
+		const output = linkExtractor(urlList);
+		setUrlsList(output);
+		notify.show('Links Extracted', 'success');
+	};
+
 	const applyFilters = () => {
-		extrackLinks();
-		const output = urlList.split('\n').filter(dt => dt.includes(linkFilter));
-		const result = output.splice(',').join('\n');
-		setUrlsList(result);
+		if (linkFilter) {
+			extrackLinks();
+			const output = urlList.split('\n').filter(dt => dt.includes(linkFilter));
+			const result = output.splice(',').join('\n');
+			setUrlsList(result);
+			notify.show('Filtered Results', 'success');
+		}
 	};
 
 	const makeLinksUnique = () => {
@@ -44,33 +53,37 @@ const Home = () => {
 			.splice(',')
 			.join('\n');
 		setUrlsList(uniqueLinks);
+		notify.show('Sorted By Unique Links', 'success');
 	};
 
 	const openAllUrls = e => {
-		e.preventDefault();
-		extrackLinks();
-		let urlOpened = 0;
-		const urlVisited = [];
-		const urlListArray = urlList.split('\n');
+		if (e) e.preventDefault();
+		if (!urlList) notify.show("No Valid URL's entered", 'error');
+		else {
+			extrackLinks();
+			let urlOpened = 0;
+			const urlVisited = [];
+			const urlListArray = urlList.split('\n');
 
-		urlListArray.map(url => {
-			if (openCount > urlOpened) {
-				urlOpened++;
-				urlVisited.push(url);
-				window.open(linkExtractor(url));
-			}
-		});
+			urlListArray.map(url => {
+				if (openCount > urlOpened) {
+					urlOpened++;
+					urlVisited.push(url);
+					window.open(linkExtractor(url));
+				}
+			});
 
-		const newUrlList = urlListArray
-			.splice(openCount, urlListArray.length)
-			.splice(',')
-			.join('\n');
-		setUrlsList(newUrlList);
+			const newUrlList = urlListArray
+				.splice(openCount, urlListArray.length)
+				.splice(',')
+				.join('\n');
+			setUrlsList(newUrlList);
 
-		const urlLogExisting = urlLog.split('\n');
-		const logData = [...urlVisited, ...urlLogExisting].splice(',').join('\n');
+			const urlLogExisting = urlLog.split('\n');
+			const logData = [...urlVisited, ...urlLogExisting].splice(',').join('\n');
 
-		setUrlLog(logData);
+			setUrlLog(logData);
+		}
 	};
 
 	return (
@@ -140,7 +153,9 @@ const Home = () => {
 								Clear Links
 							</span>
 						</div>
-						<button onClick={openAllUrls}>Open URL</button>
+						<button onClick={openAllUrls}>
+							Open URL's <span className="shortcut">(Ctrl + R)</span>
+						</button>
 					</div>
 					<textarea
 						className="logEditor"
@@ -188,6 +203,10 @@ const Home = () => {
 					margin-right: 10px;
 				}
 
+				.shortcut {
+					font-size: 10px;
+					color: #b0b7d0;
+				}
 				.options span {
 					margin: 0 10px;
 					cursor: pointer;
