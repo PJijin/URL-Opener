@@ -9,6 +9,8 @@ const Home = () => {
 	const [urlList, setUrlsList] = useState('');
 	const [urlLog, setUrlLog] = useState('');
 
+	const [filterBy, setFilterBy] = useState('');
+
 	const [linkFilter, setLinkFilter] = useState('');
 	const [openCount, setOpenCount] = useState(10);
 
@@ -38,8 +40,7 @@ const Home = () => {
 
 	const applyFilters = () => {
 		if (linkFilter) {
-			extrackLinks();
-			const output = urlList.split('\n').filter(dt => dt.includes(linkFilter));
+			const output = urlList.split('\n').filter(dt => (filterBy ? !dt.match(linkFilter) : dt.match(linkFilter)));
 			const result = output.splice(',').join('\n');
 			setUrlsList(result);
 			notify.show('Filtered Results', 'success');
@@ -100,7 +101,7 @@ const Home = () => {
 				<header>
 					<div>
 						<h1 className="title">URL Opener</h1>
-						<p className="description">Extract link / filter links from text and open URL's</p>
+						<p className="description">Extract / Filter links from text and open URL's</p>
 					</div>
 					<div className="social">
 						Follow on{' '}
@@ -122,8 +123,13 @@ const Home = () => {
 					></textarea>
 					<div className="f-sb">
 						<div className="options">
+							<select onChange={e => setFilterBy(e.target.value)}>
+								<option value={true}>Includes</option>
+								<option value={false}>Not Includes</option>
+							</select>
 							<input
 								type="text"
+								className="filterLinks"
 								onChange={e => setLinkFilter(e.target.value)}
 								value={linkFilter}
 								placeholder="Filter Links"
@@ -194,6 +200,7 @@ const Home = () => {
 					justify-content: space-between;
 					align-items: center;
 					width: 100%;
+					flex-wrap: wrap;
 				}
 
 				.options {
@@ -236,13 +243,22 @@ const Home = () => {
 					color: #fff;
 				}
 
-				input {
+				input,
+				select {
 					background: #333;
 					border: 0px;
 					font-size: 14px;
 					color: #fff;
 					padding: 0.5rem;
 					border-radius: 0.4rem;
+				}
+
+				select {
+					height: 34px;
+
+					z-index: 90;
+					position: relative;
+					border-radius: 0.5rem 0 0 0.5rem;
 				}
 				.linksEditor {
 					width: 100%;
@@ -268,6 +284,7 @@ const Home = () => {
 					line-height: 1.2rem;
 				}
 
+				select:focus,
 				textarea:focus,
 				input:focus {
 					outline: none !important;
@@ -297,6 +314,31 @@ const Home = () => {
 				button:hover {
 					background: #fff;
 					color: #000;
+				}
+
+				@media only screen and (max-width: 1110px) {
+					.f-sb {
+						margin: 0.5rem 0;
+					}
+				}
+				@media only screen and (max-width: 768px) {
+					header {
+						flex-wrap: wrap;
+					}
+					.social {
+						margin: 0.5rem;
+					}
+					select {
+						border-radius: 0.5rem;
+					}
+					.options span,
+					input,
+					select {
+						margin: 0.2rem 0;
+					}
+					.options span {
+						display: block;
+					}
 				}
 			`}</style>
 		</div>
