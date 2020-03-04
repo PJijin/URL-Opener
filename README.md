@@ -17,7 +17,18 @@
 
 ## 🤩 Features
 
-Enter URL's on text area and one click to open all URL's
+Enter URL's on text area and one click to open all URL's.
+
+- Filter URL List
+
+- Extract URL from Text 
+
+- Sort Unique Links
+
+- Visited URL Log
+
+- One click copy URL's
+
 
 ## 🤝 Contributing
 
