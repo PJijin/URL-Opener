@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Head from 'next/head';
+import parseDomain from 'parse-domain';
 
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Notifications, { notify } from 'react-notify-toast';
@@ -45,6 +46,24 @@ const Home = () => {
 			setUrlsList(result);
 			notify.show('Filtered Results', 'success');
 		}
+	};
+
+	const cleanSubdomains = () => {
+		const cleanSubList = [];
+
+		urlList.split('\n').map(it => {
+			if (it) {
+				const parseData = parseDomain(it);
+				if (parseData && parseData.domain) cleanSubList.push(`https://${parseData.domain}.${parseData.tld}`);
+			}
+		});
+
+		const newData = cleanSubList
+			.filter(onlyUnique)
+			.splice(',')
+			.join('\n');
+		setUrlsList(newData);
+		notify.show('Subdomain Cleaned', 'success');
 	};
 
 	const makeLinksUnique = () => {
@@ -144,6 +163,7 @@ const Home = () => {
 							/>
 							<span onClick={extrackLinks}>Extrack Links</span>
 							<span onClick={makeLinksUnique}>Unique Links</span>
+							<span onClick={cleanSubdomains}>Clean Subdomains</span>
 							<CopyToClipboard text={urlList} onCopy={() => notify.show('Copied!', 'success')}>
 								<span>Copy Links</span>
 							</CopyToClipboard>
@@ -339,6 +359,21 @@ const Home = () => {
 					.options span {
 						display: block;
 					}
+				}
+
+				::-webkit-scrollbar-track {
+					-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+					background-color: #191c25;
+				}
+
+				::-webkit-scrollbar {
+					width: 5px;
+					background-color: #191c25;
+				}
+
+				::-webkit-scrollbar-thumb {
+					-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+					background-color: #555;
 				}
 			`}</style>
 		</div>
