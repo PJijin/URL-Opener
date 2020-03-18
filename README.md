@@ -25,7 +25,11 @@ Enter URL's on text area and one click to open all URL's.
 
 - Sort Unique Links
 
+- URL Fuzz Option
+
 - Visited URL Log
+
+- Clean subdomain
 
 - One click copy URL's
 
