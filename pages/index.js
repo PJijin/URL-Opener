@@ -1,14 +1,29 @@
 import { useState } from 'react';
-import Head from 'next/head';
-import parseDomain from 'parse-domain';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import Notifications, { notify } from 'react-notify-toast';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { notify } from 'react-notify-toast';
+
+import {
+	subdomainCleaner,
+	makeUniqueLinks,
+	filterResults,
+	linkExtractor,
+	arrayToNewLine,
+	newLineToArray
+} from '../libs/helpers';
+import URLFuzz from '../components/url-fuzz';
+import Layout from '../components/Layout';
+import { globalStyles } from '../styles';
+
+const INITIAL_OPTIONS = {
+	urlFuzz: false
+};
 
 const Home = () => {
 	const [urlList, setUrlsList] = useState('');
 	const [urlLog, setUrlLog] = useState('');
+	const [config, setConfig] = useState(INITIAL_OPTIONS);
 
 	const [filterBy, setFilterBy] = useState('');
 
@@ -17,63 +32,44 @@ const Home = () => {
 
 	useHotkeys('ctrl+r', () => openAllUrls(null));
 
-	const linkExtractor = text => {
-		if (text) {
-			var urlRegex = /(https?:\/\/[^\s]+)/g;
-			let linkInText = '';
-			text.replace(urlRegex, function(url) {
-				linkInText = linkInText + '\n' + url;
-				return url;
-			});
-			return linkInText.trim();
-		}
-	};
-
-	const onlyUnique = (value, index, self) => {
-		return self.indexOf(value) === index;
-	};
+	const updateConfig = name =>
+		setConfig({
+			...config,
+			[name]: config[name] === 'on' || config[name] === true ? false : true
+		});
 
 	const extrackLinks = () => {
-		const output = linkExtractor(urlList);
-		setUrlsList(output);
-		notify.show('Links Extracted', 'success');
+		if (!urlList) notify.show('No valid URL List found', 'error');
+		else {
+			const output = linkExtractor(urlList);
+			setUrlsList(output);
+		}
 	};
 
 	const applyFilters = () => {
 		if (linkFilter) {
-			const output = urlList.split('\n').filter(dt => (filterBy ? !dt.match(linkFilter) : dt.match(linkFilter)));
-			const result = output.splice(',').join('\n');
-			setUrlsList(result);
-			notify.show('Filtered Results', 'success');
+			if (!urlList) notify.show('No valid URL List found', 'error');
+			else {
+				setUrlsList(filterResults(urlList, filterBy, linkFilter));
+				notify.show('Filtered Results', 'success');
+			}
 		}
 	};
 
 	const cleanSubdomains = () => {
-		const cleanSubList = [];
-
-		urlList.split('\n').map(it => {
-			if (it) {
-				const parseData = parseDomain(it);
-				if (parseData && parseData.domain) cleanSubList.push(`https://${parseData.domain}.${parseData.tld}`);
-			}
-		});
-
-		const newData = cleanSubList
-			.filter(onlyUnique)
-			.splice(',')
-			.join('\n');
-		setUrlsList(newData);
-		notify.show('Subdomain Cleaned', 'success');
+		if (!urlList) notify.show('No valid URL List found', 'error');
+		else {
+			setUrlsList(subdomainCleaner(urlList));
+			notify.show('Subdomain Cleaned', 'success');
+		}
 	};
 
 	const makeLinksUnique = () => {
-		const uniqueLinks = urlList
-			.split('\n')
-			.filter(onlyUnique)
-			.splice(',')
-			.join('\n');
-		setUrlsList(uniqueLinks);
-		notify.show('Sorted By Unique Links', 'success');
+		if (!urlList) notify.show('No valid URL List found', 'error');
+		else {
+			setUrlsList(makeUniqueLinks(urlList));
+			notify.show('Sorted By Unique Links', 'success');
+		}
 	};
 
 	const openAllUrls = e => {
@@ -83,7 +79,7 @@ const Home = () => {
 			extrackLinks();
 			let urlOpened = 0;
 			const urlVisited = [];
-			const urlListArray = urlList.split('\n');
+			const urlListArray = newLineToArray(urlList);
 
 			urlListArray.map(url => {
 				if (openCount > urlOpened) {
@@ -93,45 +89,24 @@ const Home = () => {
 				}
 			});
 
-			const newUrlList = urlListArray
-				.splice(openCount, urlListArray.length)
-				.splice(',')
-				.join('\n');
+			const newUrlList = arrayToNewLine(urlListArray.splice(openCount, urlListArray.length));
 			setUrlsList(newUrlList);
 
-			const urlLogExisting = urlLog.split('\n');
-			const logData = [...urlVisited, ...urlLogExisting].splice(',').join('\n');
+			const urlLogExisting = newLineToArray(urlLog);
+			const logData = arrayToNewLine([...urlVisited, ...urlLogExisting]);
 
 			setUrlLog(logData);
 		}
 	};
 
 	return (
-		<div className="container">
-			<Head>
-				<title>URL Opener</title>
-				<link rel="icon" href="/favicon.ico" />
-				<link href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" rel="stylesheet" />
-			</Head>
-
+		<Layout>
 			<main>
-				<Notifications />
+				<div className="tab">
+					<span onClick={() => updateConfig('urlFuzz')}>Fuzz URL </span>
+				</div>
 
-				<header>
-					<div>
-						<h1 className="title">URL Opener</h1>
-						<p className="description">Extract / Filter links from text and open URL's</p>
-					</div>
-					<div className="social">
-						Follow on{' '}
-						<a target="_BLANK" href="https://twitter.com/PJijin">
-							Twitter
-						</a>
-						<a target="_BLANK" href="https://github.com/PJijin/URL-Opener">
-							Github
-						</a>
-					</div>
-				</header>
+				{config.urlFuzz && <URLFuzz setUrls={setUrlsList} />}
 
 				<div className="content-area">
 					<textarea
@@ -179,9 +154,17 @@ const Home = () => {
 								Clear Links
 							</span>
 						</div>
-						<button onClick={openAllUrls}>
-							Open URL's <span className="shortcut">(Ctrl + R)</span>
-						</button>
+						<div>
+							<span className="urllist-count">
+								URL Count:{' '}
+								{urlLog !== '' &&
+									urlLog.split('\n').length - urlLog.split('\n').filter(a => a != '').length + ' / '}
+								{urlList !== '' ? 0 : urlList.split('\n').filter(a => a != '').length}
+							</span>
+							<button onClick={openAllUrls}>
+								Open URL's <span className="shortcut">(Ctrl + R)</span>
+							</button>
+						</div>
 					</div>
 					<textarea
 						className="logEditor"
@@ -191,192 +174,10 @@ const Home = () => {
 					></textarea>
 				</div>
 			</main>
-			<style jsx global>{`
-				::selection {
-					background: #ff4081;
-					color: #fff;
-				}
-
-				body {
-					background: #000;
-					color: #fff;
-					padding: 1rem;
-					font-family: 'Quicksand';
-				}
-
-				header {
-					display: flex;
-					justift-content: space-between;
-				}
-				header div {
-					flex: 1 1 45rem;
-				}
-
-				.description {
-					color: #737373;
-				}
-				.f-sb {
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					width: 100%;
-					flex-wrap: wrap;
-				}
-
-				.options {
-					font-size: 12px;
-				}
-				.options input {
-					margin-right: 10px;
-				}
-
-				.shortcut {
-					font-size: 10px;
-					color: #b0b7d0;
-				}
-				.options span {
-					margin: 0 10px;
-					cursor: pointer;
-					color: #737373;
-				}
-				.options span:hover {
-					color: #fff;
-				}
-
-				.social {
-					display: flex;
-					align-items: center;
-					justify-content: flex-end;
-				}
-				.social a {
-					color: #737373;
-					padding: 0 0.4rem;
-					text-decoration: none;
-				}
-
-				.container {
-					background: #000;
-				}
-
-				h1 {
-					font-size: 1.5rem;
-					color: #fff;
-				}
-
-				input,
-				select {
-					background: #333;
-					border: 0px;
-					font-size: 14px;
-					color: #fff;
-					padding: 0.5rem;
-					border-radius: 0.4rem;
-				}
-
-				select {
-					height: 34px;
-
-					z-index: 90;
-					position: relative;
-					border-radius: 0.5rem 0 0 0.5rem;
-				}
-				.linksEditor {
-					width: 100%;
-					height: 50vh;
-					background: #333;
-					border: 0px;
-					font-size: 14px;
-					color: #fff;
-					padding: 0.5rem;
-					border-radius: 0.4rem;
-					line-height: 1.2rem;
-				}
-				.logEditor {
-					width: 100%;
-					height: 13vh;
-					background: #333;
-					border: 0px;
-					font-size: 14px;
-					margin-top: 1rem;
-					color: #ccc;
-					padding: 0.5rem;
-					border-radius: 0.4rem;
-					line-height: 1.2rem;
-				}
-
-				select:focus,
-				textarea:focus,
-				input:focus {
-					outline: none !important;
-					border: 1px solid #008000;
-					box-shadow: 0 0 10px #008000;
-				}
-
-				.content-area {
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					flex-direction: column;
-				}
-
-				button {
-					border: 1px double #008000;
-					margin-top: 1rem;
-					color: #fff;
-					background: #465692;
-					padding: 1rem 2rem;
-					border: thick double #000;
-					border-radius: 0.4rem;
-					font-weight: 500;
-					cursor: pointer;
-				}
-
-				button:hover {
-					background: #fff;
-					color: #000;
-				}
-
-				@media only screen and (max-width: 1110px) {
-					.f-sb {
-						margin: 0.5rem 0;
-					}
-				}
-				@media only screen and (max-width: 768px) {
-					header {
-						flex-wrap: wrap;
-					}
-					.social {
-						margin: 0.5rem;
-					}
-					select {
-						border-radius: 0.5rem;
-					}
-					.options span,
-					input,
-					select {
-						margin: 0.2rem 0;
-					}
-					.options span {
-						display: block;
-					}
-				}
-
-				::-webkit-scrollbar-track {
-					-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-					background-color: #191c25;
-				}
-
-				::-webkit-scrollbar {
-					width: 5px;
-					background-color: #191c25;
-				}
-
-				::-webkit-scrollbar-thumb {
-					-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-					background-color: #555;
-				}
-			`}</style>
-		</div>
+			<style jsx global>
+				{globalStyles}
+			</style>
+		</Layout>
 	);
 };
 
