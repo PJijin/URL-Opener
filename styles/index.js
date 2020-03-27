@@ -27,6 +27,13 @@ export const globalStyles = css.global`
 		color: #465692;
 	}
 
+	.check-option {
+		display: flex;
+		margin-top: 1rem;
+		color: #737373;
+		align-items: center;
+	}
+
 	.tab span {
 		background: #3333334f;
 		padding: 5px 0.5rem;
@@ -36,6 +43,17 @@ export const globalStyles = css.global`
 		margin-right: 10px;
 		cursor: pointer;
 		border-bottom: 2px solid #3333334f;
+	}
+
+	.tab-content {
+		padding: 1rem;
+		margin-top: 1rem;
+		background: #5a4e4e12;
+	}
+	.tab-content input[type='text'],
+	.tab-content textarea,
+	.tab-content input[type='url'] {
+		width: 99% !important;
 	}
 
 	.tab .active {

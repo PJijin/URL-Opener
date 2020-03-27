@@ -20,12 +20,12 @@ const ParamAdder = ({ setUrls }) => {
 	};
 
 	return (
-		<div className="mt-1">
+		<div className="tab-content">
 			<textarea placeholder="URL List" value={payload} onChange={e => setPayload(e.target.value)}></textarea>
 
 			<input
 				className="urlFuzzInput"
-				type="url"
+				type="text"
 				value={urlFuzz}
 				onBlur={generateUrlList}
 				onChange={e => setUrlFuzz(e.target.value)}

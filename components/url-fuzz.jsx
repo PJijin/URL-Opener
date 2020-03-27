@@ -21,7 +21,7 @@ const URLFuzz = ({ setUrls }) => {
 	};
 
 	return (
-		<div className="mt-1">
+		<div className="tab-content">
 			<input
 				className="urlFuzzInput"
 				type="url"
@@ -29,7 +29,7 @@ const URLFuzz = ({ setUrls }) => {
 				onChange={e => setUrlFuzz(e.target.value)}
 				placeholder="URL with [FUZZ] keyword. (FUZZ will be replaced with the payload data)"
 			/>
-			<div className="mt-1">
+			<div className="check-option">
 				<input
 					type="checkbox"
 					id="urlencode"
