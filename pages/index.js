@@ -13,11 +13,14 @@ import {
 	newLineToArray
 } from '../libs/helpers';
 import URLFuzz from '../components/url-fuzz';
+import ParamAdder from '../components/param-adder';
+
 import Layout from '../components/Layout';
 import { globalStyles } from '../styles';
 
 const INITIAL_OPTIONS = {
-	urlFuzz: false
+	urlFuzz: false,
+	paramAdder: false
 };
 
 const Home = () => {
@@ -34,7 +37,7 @@ const Home = () => {
 
 	const updateConfig = name =>
 		setConfig({
-			...config,
+			...{ ...Object.keys(config).reduce((reduced, key) => ({ ...reduced, [key]: false }), {}) },
 			[name]: config[name] === 'on' || config[name] === true ? false : true
 		});
 
@@ -76,7 +79,7 @@ const Home = () => {
 		if (e) e.preventDefault();
 		if (!urlList) notify.show("No Valid URL's entered", 'error');
 		else {
-			extrackLinks();
+			// extrackLinks();
 			let urlOpened = 0;
 			const urlVisited = [];
 			const urlListArray = newLineToArray(urlList);
@@ -103,10 +106,16 @@ const Home = () => {
 		<Layout>
 			<main>
 				<div className="tab">
-					<span onClick={() => updateConfig('urlFuzz')}>Fuzz URL </span>
+					<span onClick={() => updateConfig('urlFuzz')} className={config.urlFuzz ? 'active' : ''}>
+						Fuzz URL{' '}
+					</span>
+					<span onClick={() => updateConfig('paramAdder')} className={config.paramAdder ? 'active' : ''}>
+						Param Adder{' '}
+					</span>
 				</div>
 
 				{config.urlFuzz && <URLFuzz setUrls={setUrlsList} />}
+				{config.paramAdder && <ParamAdder setUrls={setUrlsList} />}
 
 				<div className="content-area">
 					<textarea

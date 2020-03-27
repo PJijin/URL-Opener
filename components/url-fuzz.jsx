@@ -4,6 +4,7 @@ import { onlyUnique } from '../libs/helpers';
 const URLFuzz = ({ setUrls }) => {
 	const [urlFuzz, setUrlFuzz] = useState('');
 	const [payload, setPayload] = useState('');
+	const [encode, setEncode] = useState(false);
 
 	const generateUrlList = () => {
 		const result = [];
@@ -12,7 +13,7 @@ const URLFuzz = ({ setUrls }) => {
 			.split('\n')
 			.filter(onlyUnique)
 			.map(dt => {
-				const fuzzUrl = urlFuzz.replace('[FUZZ]', dt);
+				const fuzzUrl = urlFuzz.replace('[FUZZ]', encode ? encodeURI(dt) : dt);
 				result.push(fuzzUrl);
 			});
 
@@ -20,7 +21,7 @@ const URLFuzz = ({ setUrls }) => {
 	};
 
 	return (
-		<div>
+		<div className="mt-1">
 			<input
 				className="urlFuzzInput"
 				type="url"
@@ -28,6 +29,16 @@ const URLFuzz = ({ setUrls }) => {
 				onChange={e => setUrlFuzz(e.target.value)}
 				placeholder="URL with [FUZZ] keyword. (FUZZ will be replaced with the payload data)"
 			/>
+			<div className="mt-1">
+				<input
+					type="checkbox"
+					id="urlencode"
+					name="encode"
+					onChange={() => setEncode(!encode)}
+					checked={encode && true}
+				/>{' '}
+				<label htmlFor="urlencode">URL Encode</label>
+			</div>
 			<textarea
 				placeholder="Payloads (one per line)"
 				onBlur={generateUrlList}

@@ -28,7 +28,22 @@ export const globalStyles = css.global`
 	}
 
 	.tab span {
+		background: #3333334f;
+		padding: 5px 0.5rem;
+		border-radius: 0.4rem;
+		font-size: 16px;
+		color: #737373;
+		margin-right: 10px;
 		cursor: pointer;
+		border-bottom: 2px solid #3333334f;
+	}
+
+	.tab .active {
+		border-bottom: 2px solid #465692;
+	}
+
+	.mt-1 {
+		margin-top: 1rem;
 	}
 
 	.description {
