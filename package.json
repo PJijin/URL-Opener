@@ -6,13 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-		"export": "next export",
+    "export": "next export",
     "deploy": "npm run build && npm run export"
   },
   "dependencies": {
-    "next": "9.3.2",
+    "next": "^9.5.5",
     "parse-domain": "^2.3.4",
-    "react": "16.12.0",
+    "react": "^17.0.1",
     "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "16.12.0",
     "react-hotkeys-hook": "^1.5.4",
