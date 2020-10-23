@@ -10,7 +10,7 @@ import {
 	filterResults,
 	linkExtractor,
 	arrayToNewLine,
-	newLineToArray
+	newLineToArray,
 } from '../libs/helpers';
 import URLFuzz from '../components/url-fuzz';
 import ParamAdder from '../components/param-adder';
@@ -20,7 +20,7 @@ import { globalStyles } from '../styles';
 
 const INITIAL_OPTIONS = {
 	urlFuzz: false,
-	paramAdder: false
+	paramAdder: false,
 };
 
 const Home = () => {
@@ -35,10 +35,10 @@ const Home = () => {
 
 	useHotkeys('ctrl+r', () => openAllUrls(null));
 
-	const updateConfig = name =>
+	const updateConfig = (name) =>
 		setConfig({
 			...{ ...Object.keys(config).reduce((reduced, key) => ({ ...reduced, [key]: false }), {}) },
-			[name]: config[name] === 'on' || config[name] === true ? false : true
+			[name]: config[name] === 'on' || config[name] === true ? false : true,
 		});
 
 	const extrackLinks = () => {
@@ -75,7 +75,7 @@ const Home = () => {
 		}
 	};
 
-	const openAllUrls = e => {
+	const openAllUrls = (e) => {
 		if (e) e.preventDefault();
 		if (!urlList) notify.show("No Valid URL's entered", 'error');
 		else {
@@ -84,7 +84,7 @@ const Home = () => {
 			const urlVisited = [];
 			const urlListArray = newLineToArray(urlList);
 
-			urlListArray.map(url => {
+			urlListArray.map((url) => {
 				if (openCount > urlOpened) {
 					urlOpened++;
 					urlVisited.push(url);
@@ -120,20 +120,20 @@ const Home = () => {
 				<div className="content-area">
 					<textarea
 						className="linksEditor"
-						onChange={e => setUrlsList(e.target.value)}
+						onChange={(e) => setUrlsList(e.target.value)}
 						placeholder="Paste Text / Links"
 						value={urlList}
 					></textarea>
 					<div className="f-sb">
 						<div className="options">
-							<select onChange={e => setFilterBy(e.target.value)}>
+							<select onChange={(e) => setFilterBy(e.target.value)}>
 								<option value={true}>Includes</option>
 								<option value={false}>Not Includes</option>
 							</select>
 							<input
 								type="text"
 								className="filterLinks"
-								onChange={e => setLinkFilter(e.target.value)}
+								onChange={(e) => setLinkFilter(e.target.value)}
 								value={linkFilter}
 								placeholder="Filter Links"
 								onBlur={applyFilters}
@@ -141,7 +141,7 @@ const Home = () => {
 
 							<input
 								type="number"
-								onChange={e => setOpenCount(e.target.value)}
+								onChange={(e) => setOpenCount(e.target.value)}
 								value={openCount}
 								placeholder="Limit URL"
 							/>
@@ -157,16 +157,23 @@ const Home = () => {
 							<span
 								onClick={() => {
 									setUrlsList('');
-									setUrlLog('');
 								}}
 							>
 								Clear Links
 							</span>
+
+							<span
+								onClick={() => {
+									setUrlLog('');
+								}}
+							>
+								Clear Logs
+							</span>
 						</div>
 						<div>
 							<span className="urllist-count">
-								URL Count: {urlLog !== '' && urlLog.split('\n').filter(a => a != '').length + ' / '}
-								{urlList === '' ? 0 : urlList.split('\n').filter(a => a != '').length}
+								URL Count: {urlLog !== '' && urlLog.split('\n').filter((a) => a != '').length + ' / '}
+								{urlList === '' ? 0 : urlList.split('\n').filter((a) => a != '').length}
 							</span>
 							<button onClick={openAllUrls}>
 								Open URL's <span className="shortcut">(Ctrl + R)</span>
@@ -176,7 +183,7 @@ const Home = () => {
 					<textarea
 						className="logEditor"
 						placeholder="URL Log"
-						onChange={e => setUrlLog(e.target.value)}
+						onChange={(e) => setUrlLog(e.target.value)}
 						value={urlLog}
 					></textarea>
 				</div>
