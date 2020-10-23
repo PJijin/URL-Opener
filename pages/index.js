@@ -172,8 +172,18 @@ const Home = () => {
 						</div>
 						<div>
 							<span className="urllist-count">
-								URL Count: {urlLog !== '' && urlLog.split('\n').filter((a) => a != '').length + ' / '}
-								{urlList === '' ? 0 : urlList.split('\n').filter((a) => a != '').length}
+								{urlList === '' ? (
+									<>
+										Visited URL's: {'  '}
+										{urlLog !== '' ? urlLog.split('\n').filter((a) => a != '').length : 0}
+									</>
+								) : (
+									<>
+										URL Count:{' '}
+										{urlLog !== '' && urlLog.split('\n').filter((a) => a != '').length + ' / '}
+										{urlList.split('\n').filter((a) => a != '').length}
+									</>
+								)}
 							</span>
 							<button onClick={openAllUrls}>
 								Open URL's <span className="shortcut">(Ctrl + R)</span>
