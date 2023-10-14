@@ -9,7 +9,7 @@ export const globalStyles = css.global`
 	body {
 		background: #000;
 		color: #fff;
-		padding: 1rem;
+		// padding: 1rem;
 		font-family: 'Quicksand';
 	}
 
@@ -123,87 +123,70 @@ export const globalStyles = css.global`
 		color: #fff;
 	}
 
-	input,
-	select {
-		background: #333;
-		font-size: 14px;
-		color: #fff;
-		padding: 0.5rem;
-		border-radius: 0.4rem;
-	}
+	// input,
+	// select {
+	// 	background: #333;
+	// 	font-size: 14px;
+	// 	color: #fff;
+	// 	padding: 0.5rem;
+	// 	border-radius: 0.4rem;
+	// }
 
-	select {
-		height: 34px;
-		margin: 0 5px 0 0;
-		z-index: 90;
-		position: relative;
-		border-radius: 0.5rem 0 0 0.5rem;
-	}
+	// select {
+	// 	height: 34px;
+	// 	margin: 0 5px 0 0;
+	// 	z-index: 90;
+	// 	position: relative;
+	// 	border-radius: 0.5rem 0 0 0.5rem;
+	// }
 
 	.logo-hat {
 		position: absolute;
 		transform: rotate(0);
 	}
 
-	.linksEditor {
-		width: 100%;
-		height: 50vh;
-		background: #333;
-		font-size: 14px;
-		color: #fff;
-		padding: 0.5rem;
-		border-radius: 0.4rem;
-		line-height: 1.2rem;
-	}
-	.logEditor,
-	textarea {
-		width: 100%;
-		height: 13vh;
-		background: #333;
-		font-size: 14px;
-		margin-top: 1rem;
-		color: #ccc;
-		padding: 0.5rem;
-		border-radius: 0.4rem;
-		line-height: 1.2rem;
-	}
+	// .linksEditor {
+	// 	width: 100%;
+	// 	height: 50vh;
+	// 	background: #333;
+	// 	font-size: 14px;
+	// 	color: #fff;
+	// 	padding: 0.5rem;
+	// 	border-radius: 0.4rem;
+	// 	line-height: 1.2rem;
+	// }
+	// .logEditor,
+	// textarea {
+	// 	width: 100%;
+	// 	height: 13vh;
+	// 	background: #333;
+	// 	font-size: 14px;
+	// 	margin-top: 1rem;
+	// 	color: #ccc;
+	// 	padding: 0.5rem;
+	// 	border-radius: 0.4rem;
+	// 	line-height: 1.2rem;
+	// }
 
-	select,
-	textarea,
-	input {
-		border: 1px solid #333;
-	}
+	// select,
+	// textarea,
+	// input {
+	// 	border: 1px solid #333;
+	// }
 
-	select:focus,
-	textarea:focus,
-	input:focus {
-		outline: none !important;
-		border: 1px solid #008000;
-		box-shadow: 0 0 10px #008000;
-	}
+	// select:focus,
+	// textarea:focus,
+	// input:focus {
+	// 	outline: none !important;
+	// 	border: 1px solid #008000;
+	// 	box-shadow: 0 0 10px #008000;
+	// }
 
 	.content-area {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
-	}
-
-	button {
-		border: 1px double #008000;
-		margin-top: 1rem;
-		color: #fff;
-		background: #465692;
-		padding: 1rem 2rem;
-		border: thick double #000;
-		border-radius: 0.4rem;
-		font-weight: 500;
-		cursor: pointer;
-	}
-
-	button:hover {
-		background: #fff;
-		color: #000;
 	}
 
 	@media only screen and (max-width: 1110px) {

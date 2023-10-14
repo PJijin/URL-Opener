@@ -1,4 +1,5 @@
-import parseDomain from 'parse-domain';
+import { fromUrl, parseDomain } from "parse-domain";
+
 
 export const onlyUnique = (value, index, self) => {
 	return self.indexOf(value) === index;
@@ -26,14 +27,15 @@ export const subdomainCleaner = urlList => {
 
 	urlList.split('\n').map(it => {
 		if (it) {
-			const parseData = parseDomain(it);
-			if (parseData && parseData.domain) cleanSubList.push(`https://${parseData.domain}.${parseData.tld}`);
+			const parseData = parseDomain(fromUrl(it));
+			// @ts-ignore
+			if (parseData && parseData.hostname) cleanSubList.push(`https://${String(parseData.topLevelDomains.join('.'))}`);
 		}
 	});
 
 	return cleanSubList
 		.filter(onlyUnique)
-		.splice(',')
+		// .splice(',')
 		.join('\n');
 };
 
@@ -41,7 +43,7 @@ export const linkExtractor = text => {
 	if (text !== '') {
 		var urlRegex = /(https?:\/\/[^\s]+)/g;
 		let linkInText = '';
-		text.replace(urlRegex, function(url) {
+		text.replace(urlRegex, function (url) {
 			linkInText = linkInText + '\n' + url;
 			return url;
 		});
