@@ -15,7 +15,7 @@ import {
 	subdomainCleaner,
 } from '../libs/helpers';
 
-import { Badge, Button, Select, TextArea, TextField } from '@radix-ui/themes';
+import { Badge, Button, Select, Text, TextArea, TextField } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 import Layout from '../components/Layout';
 import ParamAdder from '../components/param-adder';
@@ -115,38 +115,53 @@ const Home = () => {
 					/>
 					<div className="w-full my-5">
 						<div className="flex items-center space-x-5">
-							<Select.Root
-								value={filterBy}
-								onValueChange={(e) => {
-									setFilterBy(e);
-								}}
-							>
-								<Select.Trigger />
-								<Select.Content>
-									<Select.Group>
-										<Select.Label>Filter</Select.Label>
-										<Select.Item value="false">Includes</Select.Item>
-										<Select.Item value="true">Not Includes</Select.Item>
-									</Select.Group>
-								</Select.Content>
-							</Select.Root>
+							<div>
+								<Text color="gray" size="1">
+									Filter by
+								</Text>
+								<Select.Root
+									value={filterBy}
+									onValueChange={(e) => {
+										setFilterBy(e);
+									}}
+								>
+									<Select.Trigger />
+									<Select.Content>
+										<Select.Group>
+											<Select.Label>Filter</Select.Label>
+											<Select.Item value="false">Includes</Select.Item>
+											<Select.Item value="true">Not Includes</Select.Item>
+										</Select.Group>
+									</Select.Content>
+								</Select.Root>
+							</div>
 
-							<TextField.Input
-								type="text"
-								className="filterLinks"
-								onChange={(e) => setLinkFilter(e.target.value)}
-								value={linkFilter}
-								placeholder="Filter Links"
-								onBlur={applyFilters}
-							/>
+							<div>
+								<Text color="gray" size="1">
+									Filter String
+								</Text>
 
-							<TextField.Input
-								type="number"
-								onChange={(e) => setOpenCount(Number(e.target.value))}
-								value={openCount}
-								className="w-2"
-								placeholder="Limit URL"
-							/>
+								<TextField.Input
+									type="text"
+									className="filterLinks"
+									onChange={(e) => setLinkFilter(e.target.value)}
+									value={linkFilter}
+									placeholder="Filter Links"
+									onBlur={applyFilters}
+								/>
+							</div>
+							<div>
+								<Text color="gray" size="1">
+									Limit URL
+								</Text>
+								<TextField.Input
+									type="number"
+									onChange={(e) => setOpenCount(Number(e.target.value))}
+									value={openCount}
+									className="w-2"
+									placeholder="Limit URL"
+								/>
+							</div>
 							<Button variant="ghost" size="2" onClick={extrackLinks}>
 								Extrack Links
 							</Button>
