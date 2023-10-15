@@ -2,12 +2,12 @@ import { AlertDialog, Button, Flex, TextArea, TextField } from '@radix-ui/themes
 import { useState } from 'react';
 import { onlyUnique } from '../libs/helpers';
 
-const ParamAdder = ({ setUrls }) => {
+const ParamAdder = ({ setUrls }: { setUrls: React.Dispatch<React.SetStateAction<string>> }) => {
 	const [urlFuzz, setUrlFuzz] = useState('');
 	const [payload, setPayload] = useState('');
 
 	const generateUrlList = () => {
-		const result = [];
+		const result: string[] = [];
 
 		payload
 			.split('\n')

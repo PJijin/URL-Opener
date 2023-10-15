@@ -4,11 +4,11 @@ import { Theme } from '@radix-ui/themes';
 import { Toaster } from 'sonner';
 import '../styles/global.css';
 
-const AppLayout = ({ children }) => {
+const AppLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<Theme appearance="dark">
 			{children}
-			<Toaster />
+			<Toaster position="top-center" theme="dark" />
 		</Theme>
 	);
 };
