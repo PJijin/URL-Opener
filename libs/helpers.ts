@@ -1,29 +1,29 @@
 import { fromUrl, parseDomain } from "parse-domain";
 
 
-export const onlyUnique = (value, index, self) => {
+export const onlyUnique = (value: string, index: number, self: any) => {
 	return self.indexOf(value) === index;
 };
 
-export const newLineToArray = urlList => urlList.split('\n');
+export const newLineToArray = (urlList: string) => urlList.split('\n');
 
-export const arrayToNewLine = output => output.splice(',').join('\n');
+export const arrayToNewLine = (output: any) => output.splice(',').join('\n');
 
-export const makeUniqueLinks = urlList => {
+export const makeUniqueLinks = (urlList: string) => {
 	return urlList
 		.split('\n')
 		.filter(onlyUnique)
-		.splice(',')
+		// .splice(',')
 		.join('\n');
 };
 
-export const filterResults = (urlList, filterBy, linkFilter) => {
+export const filterResults = (urlList: string, filterBy: boolean, linkFilter: string) => {
 	const output = urlList.split('\n').filter(dt => (filterBy ? !dt.match(linkFilter) : dt.match(linkFilter)));
 	return arrayToNewLine(output);
 };
 
-export const subdomainCleaner = urlList => {
-	const cleanSubList = [];
+export const subdomainCleaner = (urlList: string) => {
+	const cleanSubList: string[] = [];
 
 	urlList.split('\n').map(it => {
 		if (it) {
@@ -39,7 +39,7 @@ export const subdomainCleaner = urlList => {
 		.join('\n');
 };
 
-export const linkExtractor = text => {
+export const linkExtractor = (text: string) => {
 	if (text !== '') {
 		var urlRegex = /(https?:\/\/[^\s]+)/g;
 		let linkInText = '';

@@ -37,7 +37,7 @@ const Home = () => {
 		if (!urlList) toast.error('No valid URL List found');
 		else {
 			const output = linkExtractor(urlList);
-			setUrlsList(output);
+			if (output) setUrlsList(output);
 		}
 	};
 
@@ -69,7 +69,7 @@ const Home = () => {
 		}
 	};
 
-	const openAllUrls = (e) => {
+	const openAllUrls = (e: any) => {
 		if (e) e.preventDefault();
 		if (!urlList) toast.error("No Valid URL's entered");
 		else {
@@ -115,7 +115,7 @@ const Home = () => {
 					/>
 					<div className="w-full my-5">
 						<div className="flex items-center space-x-5">
-							<div>
+							<div className="space-x-2">
 								<Text color="gray" size="1">
 									Filter by
 								</Text>
@@ -137,31 +137,16 @@ const Home = () => {
 							</div>
 
 							<div>
-								<Text color="gray" size="1">
-									Filter String
-								</Text>
-
 								<TextField.Input
 									type="text"
 									className="filterLinks"
 									onChange={(e) => setLinkFilter(e.target.value)}
 									value={linkFilter}
-									placeholder="Filter Links"
+									placeholder="Filter String"
 									onBlur={applyFilters}
 								/>
 							</div>
-							<div>
-								<Text color="gray" size="1">
-									Limit URL
-								</Text>
-								<TextField.Input
-									type="number"
-									onChange={(e) => setOpenCount(Number(e.target.value))}
-									value={openCount}
-									className="w-2"
-									placeholder="Limit URL"
-								/>
-							</div>
+
 							<Button variant="ghost" size="2" onClick={extrackLinks}>
 								Extrack Links
 							</Button>
@@ -186,6 +171,7 @@ const Home = () => {
 								size="2"
 								onClick={() => {
 									setUrlsList('');
+									toast.success('Cleared!');
 								}}
 							>
 								Clear Links
@@ -195,30 +181,43 @@ const Home = () => {
 								variant="ghost"
 								onClick={() => {
 									setUrlLog('');
+									toast.success('Cleared!');
 								}}
 							>
 								Clear Logs
 							</Button>
 						</div>
-						<div className="mt-5 flex items-center">
-							<span className="urllist-count">
-								{urlList === '' ? (
-									<>
+						<div className="mt-5 flex items-center justify-between w-full">
+							<div className="flex items-center space-x-5">
+								<div>
+									<Text color="gray" size="1">
+										Limit URL
+									</Text>
+									<TextField.Input
+										type="number"
+										onChange={(e) => setOpenCount(Number(e.target.value))}
+										value={openCount}
+										className="w-2"
+										placeholder="Limit URL"
+									/>
+								</div>
+								<span className="urllist-count flex items-center space-x-5">
+									<p>
 										Visited URL's: {'  '}
 										<Badge>
 											{urlLog !== '' ? urlLog.split('\n').filter((a) => a != '').length : 0}
 										</Badge>
-									</>
-								) : (
-									<>
+									</p>
+
+									<p>
 										URL Count:{' '}
 										<Badge>
 											{urlLog !== '' && urlLog.split('\n').filter((a) => a != '').length + ' / '}
 											{urlList.split('\n').filter((a) => a != '').length}
 										</Badge>
-									</>
-								)}
-							</span>
+									</p>
+								</span>
+							</div>
 							<Button color="blue" size={'2'} onClick={openAllUrls}>
 								Open URL's <span className="text-xs">(Ctrl + R)</span>
 							</Button>
@@ -229,6 +228,7 @@ const Home = () => {
 						placeholder="URL Log"
 						onChange={(e) => setUrlLog(e.target.value)}
 						value={urlLog}
+						readOnly
 					/>
 				</div>
 			</main>
