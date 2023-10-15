@@ -2,13 +2,13 @@ import { AlertDialog, Button, Checkbox, Flex, TextArea, TextField } from '@radix
 import { useState } from 'react';
 import { onlyUnique } from '../libs/helpers';
 
-const URLFuzz = ({ setUrls }) => {
+const URLFuzz = ({ setUrls }: { setUrls: React.Dispatch<React.SetStateAction<string>> }) => {
 	const [urlFuzz, setUrlFuzz] = useState('');
 	const [payload, setPayload] = useState('');
 	const [encode, setEncode] = useState(false);
 
 	const generateUrlList = () => {
-		const result = [];
+		const result: string[] = [];
 
 		payload
 			.split('\n')

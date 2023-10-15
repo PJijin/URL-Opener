@@ -1,6 +1,6 @@
 import Head from 'next/head';
 
-const Layout = ({ children }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<div className="p-5">
 			<Head>

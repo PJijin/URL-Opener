@@ -75,7 +75,7 @@ const Home = () => {
 		else {
 			// extrackLinks();
 			let urlOpened = 0;
-			const urlVisited = [];
+			const urlVisited: string[] = [];
 			const urlListArray = newLineToArray(urlList);
 
 			urlListArray.map((url) => {
